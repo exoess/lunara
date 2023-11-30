@@ -2,10 +2,31 @@ using Gtk;
 using GtkLayerShell;
 using Lua;
 
-void setAnchors(Window window) {
-    GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.TOP, true);
-    GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.BOTTOM, true);
-    GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.LEFT, true);
+void setAnchors(LuaVM L, Window window) {
+    L.get_field(1, "anchor");
+
+    string[] anchor = new string[4];
+
+    foreach (var i in anchor) {
+        switch (i) {
+            case "top":
+                GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.TOP, true);
+                break;
+            case "right":
+                GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.RIGHT, true);
+                break;
+            case "bottom":
+                GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.BOTTOM, true);
+                break;
+            case "left":
+                GtkLayerShell.set_anchor(window, GtkLayerShell.Edge.LEFT, true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    L.pop(1);
 }
 
 void setMargins(LuaVM L, Window window) {
@@ -32,7 +53,7 @@ public int window(LuaVM L) {
     GtkLayerShell.init_for_window(gtkWindow);
     GtkLayerShell.auto_exclusive_zone_enable(gtkWindow);
 
-    setAnchors(gtkWindow);
+    setAnchors(L, gtkWindow);
     setMargins(L, gtkWindow);
 
     gtkWindow.destroy.connect(Gtk.main_quit);
